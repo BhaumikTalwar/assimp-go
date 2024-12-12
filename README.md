@@ -38,7 +38,7 @@ download from the GitHub releases page.
 
 ### Installing on Windows
 
-Download the **.dll** of the [release you want](https://github.com/bloeys/assimp-go/releases/tag/v0.4.2), and place it in the **root** of your Go project.
+Download the **.dll** of the [release you want](https://github.com/bloeys/assimp-go/releases), and place it in the **root** of your Go project.
 
 ### Installing on MacOS
 
