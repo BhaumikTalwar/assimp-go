@@ -19,14 +19,14 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/bloeys/gglm/gglm"
+	glm "github.com/go-gl/mathgl/mgl32"
 )
 
 type Node struct {
 	Name string
 
 	//The transformation relative to the node's parent
-	Transformation *gglm.Mat4
+	Transformation *glm.Mat4
 
 	//Parent node. NULL if this node is the root node
 	Parent *Node
@@ -389,18 +389,16 @@ func parseMeshes(cm **C.struct_aiMesh, count uint) []*Mesh {
 	return meshes
 }
 
-func parseVec3(cv *C.struct_aiVector3D) gglm.Vec3 {
+func parseVec3(cv *C.struct_aiVector3D) glm.Vec3 {
 
 	if cv == nil {
-		return gglm.Vec3{}
+		return glm.Vec3{}
 	}
 
-	return gglm.Vec3{
-		Data: [3]float32{
-			float32(cv.x),
-			float32(cv.y),
-			float32(cv.z),
-		},
+	return glm.Vec3{
+		float32(cv.x),
+		float32(cv.y),
+		float32(cv.z),
 	}
 }
 
@@ -431,9 +429,9 @@ func parseAnimMeshes(cam **C.struct_aiAnimMesh, count uint) []*AnimMesh {
 	return animMeshes
 }
 
-func parseTexCoords(ctc [MaxTexCoords]*C.struct_aiVector3D, vertCount uint) [MaxTexCoords][]gglm.Vec3 {
+func parseTexCoords(ctc [MaxTexCoords]*C.struct_aiVector3D, vertCount uint) [MaxTexCoords][]glm.Vec3 {
 
-	texCoords := [MaxTexCoords][]gglm.Vec3{}
+	texCoords := [MaxTexCoords][]glm.Vec3{}
 
 	for j := 0; j < len(ctc); j++ {
 
@@ -448,9 +446,9 @@ func parseTexCoords(ctc [MaxTexCoords]*C.struct_aiVector3D, vertCount uint) [Max
 	return texCoords
 }
 
-func parseColorSet(cc [MaxColorSets]*C.struct_aiColor4D, vertCount uint) [MaxColorSets][]gglm.Vec4 {
+func parseColorSet(cc [MaxColorSets]*C.struct_aiColor4D, vertCount uint) [MaxColorSets][]glm.Vec4 {
 
-	colorSet := [MaxColorSets][]gglm.Vec4{}
+	colorSet := [MaxColorSets][]glm.Vec4{}
 	for j := 0; j < len(cc); j++ {
 
 		//If a color set isn't available then it is nil
@@ -486,19 +484,17 @@ func parseBones(cbs **C.struct_aiBone, count uint) []*Bone {
 	return bones
 }
 
-func parseMat4(cm4 *C.struct_aiMatrix4x4) *gglm.Mat4 {
+func parseMat4(cm4 *C.struct_aiMatrix4x4) *glm.Mat4 {
 
 	if cm4 == nil {
-		return &gglm.Mat4{}
+		return &glm.Mat4{}
 	}
 
-	return &gglm.Mat4{
-		Data: [4][4]float32{
-			{float32(cm4.a1), float32(cm4.b1), float32(cm4.c1), float32(cm4.d1)},
-			{float32(cm4.a2), float32(cm4.b2), float32(cm4.c2), float32(cm4.d2)},
-			{float32(cm4.a3), float32(cm4.b3), float32(cm4.c3), float32(cm4.d3)},
-			{float32(cm4.a4), float32(cm4.b4), float32(cm4.c4), float32(cm4.d4)},
-		},
+	return &glm.Mat4{
+		float32(cm4.a1), float32(cm4.a2), float32(cm4.a3), float32(cm4.a4), // col 0
+		float32(cm4.b1), float32(cm4.b2), float32(cm4.b3), float32(cm4.b4), // col 1
+		float32(cm4.c1), float32(cm4.c2), float32(cm4.c3), float32(cm4.c4), // col 2
+		float32(cm4.d1), float32(cm4.d2), float32(cm4.d3), float32(cm4.d4), // col 3
 	}
 }
 
@@ -545,45 +541,41 @@ func parseUInts(cui *C.uint, count uint) []uint {
 	return uints
 }
 
-func parseVec3s(cv *C.struct_aiVector3D, count uint) []gglm.Vec3 {
+func parseVec3s(cv *C.struct_aiVector3D, count uint) []glm.Vec3 {
 
 	if cv == nil {
-		return []gglm.Vec3{}
+		return []glm.Vec3{}
 	}
 
 	carr := unsafe.Slice(cv, count)
-	verts := make([]gglm.Vec3, count)
+	verts := make([]glm.Vec3, count)
 
 	for i := 0; i < int(count); i++ {
-		verts[i] = gglm.Vec3{
-			Data: [3]float32{
-				float32(carr[i].x),
-				float32(carr[i].y),
-				float32(carr[i].z),
-			},
+		verts[i] = glm.Vec3{
+			float32(carr[i].x),
+			float32(carr[i].y),
+			float32(carr[i].z),
 		}
 	}
 
 	return verts
 }
 
-func parseColors(cv *C.struct_aiColor4D, count uint) []gglm.Vec4 {
+func parseColors(cv *C.struct_aiColor4D, count uint) []glm.Vec4 {
 
 	if cv == nil {
-		return []gglm.Vec4{}
+		return []glm.Vec4{}
 	}
 
 	carr := unsafe.Slice(cv, count)
-	verts := make([]gglm.Vec4, count)
+	verts := make([]glm.Vec4, count)
 
 	for i := 0; i < int(count); i++ {
-		verts[i] = gglm.Vec4{
-			Data: [4]float32{
-				float32(carr[i].r),
-				float32(carr[i].g),
-				float32(carr[i].b),
-				float32(carr[i].a),
-			},
+		verts[i] = glm.Vec4{
+			float32(carr[i].r),
+			float32(carr[i].g),
+			float32(carr[i].b),
+			float32(carr[i].a),
 		}
 	}
 
