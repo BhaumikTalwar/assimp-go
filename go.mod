@@ -1,5 +1,5 @@
-module github.com/bloeys/assimp-go
+module github.com/BhaumikTalwar/assimp-go
 
-go 1.17
+go 1.22
 
 require github.com/bloeys/gglm v0.3.1
