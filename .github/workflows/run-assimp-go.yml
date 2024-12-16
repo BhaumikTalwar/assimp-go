@@ -11,7 +11,7 @@ jobs:
         with:
           go-version: '^1.17'
       - name: Clone assimp-go
-        run: git clone https://github.com/bloeys/assimp-go
+        run: git clone https://github.com/BhaumikTalwar/assimp-go
       - name: Copy dylib
         working-directory: assimp-go
         run: sudo mkdir -p /usr/local/lib && sudo cp asig/libs/libassimp_darwin_amd64.dylib /usr/local/lib/libassimp.5.dylib
