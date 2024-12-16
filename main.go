@@ -10,7 +10,15 @@ import (
 
 func main() {
 
-	scene, release, err := asig.ImportFile("obj.obj", asig.PostProcessTriangulate|asig.PostProcessJoinIdenticalVertices)
+	scene, release, err := asig.ImportFile("../../depedencies/backpack.obj", asig.PostProcessTriangulate|
+		asig.PostProcessGenNormals|
+		asig.PostProcessOptimizeMeshes|
+		asig.PostProcessJoinIdenticalVertices|
+		asig.PostProcessGenUVCoords|
+		asig.PostProcessFlipUVs|
+		asig.PostProcessCalcTangentSpace,
+	)
+
 	if err != nil {
 		panic(err)
 	}
@@ -18,11 +26,14 @@ func main() {
 
 	fmt.Printf("RootNode: %+v\n\n", scene.RootNode)
 
+	var vertCount uint32 = 0
 	for i := 0; i < len(scene.Meshes); i++ {
-
 		println("Mesh:", i, "; Verts:", len(scene.Meshes[i].Vertices), "; Normals:", len(scene.Meshes[i].Normals), "; MatIndex:", scene.Meshes[i].MaterialIndex)
+
+		vertCount += uint32(len(scene.Meshes[i].Vertices))
 		for j := 0; j < len(scene.Meshes[i].Vertices); j++ {
 			fmt.Printf("V(%v): (%v, %v, %v)\n", j, scene.Meshes[i].Vertices[j].X(), scene.Meshes[i].Vertices[j].Y(), scene.Meshes[i].Vertices[j].Z())
+
 		}
 	}
 
@@ -31,7 +42,7 @@ func main() {
 		m := scene.Materials[i]
 		println("Material:", i, "; Props:", len(scene.Materials[i].Properties))
 		texCount := asig.GetMaterialTextureCount(m, asig.TextureTypeDiffuse)
-		fmt.Println("Texture count:", texCount)
+		fmt.Println("Material Texture count:", texCount)
 
 		if texCount > 0 {
 
@@ -54,6 +65,12 @@ func main() {
 			decodePNG(t.Data)
 		}
 	}
+
+	fmt.Println("\n---------------------------------------------")
+	fmt.Println("Total Mesh Count:", len(scene.Meshes))
+	fmt.Println("Total Vert Count:", vertCount)
+	fmt.Println("Total Material Count:", len(scene.Materials))
+	fmt.Println("Total Texture Count:", len(scene.Textures))
 }
 
 func decodePNG(texels []byte) {
